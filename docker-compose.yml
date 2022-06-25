@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+
+  backend:
+    build: ./backend
+    # command: npm run start:dev
+    command: npm run start
+    container_name: app-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MYSQL_HOST=mysql_db
+    restart: unless-stopped
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    security_opt:
+      - seccomp:unconfined
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - users_data:/var/lib/mysql/main
+
+volumes:
+  users_data:

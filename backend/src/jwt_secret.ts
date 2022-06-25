@@ -1,0 +1,1 @@
+export const secret = 'have a nice day';
