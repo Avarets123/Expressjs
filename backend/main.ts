@@ -1,5 +1,5 @@
 import { App } from "./src/app";
-import 'reflect-metadata'
+import 'reflect-metadata';
 import typeormConfig from "./src/ormconfig";
 import { DataSource, DataSourceOptions } from "typeorm";
 

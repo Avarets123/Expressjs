@@ -13,24 +13,34 @@ import { IUserEdit } from '../interfaces/user.edit.interface';
 
 
 
-export class AppService {
+export class UserService {
 
     userRepository(): Repository<UserEntity> {
         return MyAppSourceData.getRepository(UserEntity)
     }
 
-    async registerUser(registerUser: IUserReg): Promise<UserEntity> {
+    async registerUser(registerUser: IUserReg, photo?: string): Promise<UserEntity> {
 
         const { email } = registerUser;
 
         const hasUser = await this.userRepository().findOneBy({ email });
 
+
         if (hasUser) {
             throw (`User by ${email} excist`)
         }
 
+
+
+
         const newUser = new UserEntity();
         Object.assign(newUser, registerUser);
+
+        if (photo) {
+            newUser.photo = photo
+        }
+
+
 
         return await this.userRepository().save(newUser)
 
@@ -82,7 +92,7 @@ export class AppService {
     }
 
 
-    async editUser(id: string, userEdit: IUserEdit): Promise<UserEntity> {
+    async editUser(id: string, userEdit: IUserEdit, photo?: string): Promise<UserEntity> {
 
         const hasUser = await this.userRepository().findOneBy({ id: +id });
 
@@ -91,6 +101,11 @@ export class AppService {
         }
 
         Object.assign(hasUser, userEdit);
+
+        if (photo) {
+            hasUser.photo = photo;
+        }
+
         await this.userRepository().save(hasUser);
 
         return hasUser;
@@ -119,19 +134,9 @@ export class AppService {
             users = await queryBuilder.offset((countPage - 1) * 10).limit(10).getMany();
         }
 
-
-
         return users;
 
     }
-
-
-
-
-
-
-
-
 
 
 }
